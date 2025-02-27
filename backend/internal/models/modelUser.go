@@ -1,14 +1,53 @@
 package models
 
 import (
+	"errors"
+
 	"gorm.io/gorm"
 )
 
 type User struct {
-	gorm.Model
+	Username string   `gorm:"size:100;primaryKey;unique;not null" json:"username"`
+	Email    string   `gorm:"unique;not null" json:"email"`
 	Name     string   `gorm:"size:100;not null" json:"name"`
-	Email    string   `gorm:"size:100;unique;not null" json:"email"`
 	Password string   `gorm:"not null" json:"-"`
-	Tryouts  []Tryout `gorm:"constraint:OnDelete:CASCADE;" json:"tryouts"`
+	Tryouts  []Tryout `gorm:"foreignKey:Username;references:Username;constraint:OnDelete:CASCADE" json:"tryouts"`
 }
 
+
+func (u *User) CreateUser() (*User, error) {
+	if err := Db.Create(&u).Error; err != nil {
+		return nil, err
+	}
+	return u, nil
+}
+
+func GetUser(username string) (*User, error) {
+	var user User
+	err := Db.Preload("Tryouts").Where("username = ?", username).First(&user).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, nil // Tidak ditemukan, return nil
+	}
+	if err != nil {
+		return nil, err // Error lainnya
+	}
+	return &user, nil
+}
+
+func GetAllUser() ([]User, error) {
+	var allUser []User
+	if err := Db.Find(&allUser).Error; err != nil {
+		return nil, err
+	}
+	return allUser, nil
+}
+
+func DeleteUser(username string) (User, error) {
+	var user User
+
+	err := Db.Where("username = ?", username).Delete(&user).Error
+	if err != nil {
+		return User{}, err
+	}
+	return user, nil
+}

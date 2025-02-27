@@ -6,7 +6,12 @@ import (
 )
 
 func ListTryout(c *fiber.Ctx) error {
-	allTryout := models.GetAllTryout()
+	allTryout, err := models.GetAllTryout()
+	if err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+	        "error": err.Error(),
+	    })
+	}
 	return c.JSON(allTryout)	
 }
 
@@ -24,7 +29,7 @@ func GetTryoutById(c *fiber.Ctx) error {
 
 func GetTryoutByUser(c *fiber.Ctx) error {
 	id := c.Params("userId")
-	tryout, err := models.GetTryoutsByUserID(id)
+	tryout, err := models.GetTryoutsByUsername(id)
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 	        "error": "Tryout not found",
@@ -89,7 +94,13 @@ func AddTryout(c *fiber.Ctx) error {
 		})
 	}
 
-	newTryout := tryout.CreateTryout()
+	newTryout, err := tryout.CreateTryout()
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error" : "error processing data",
+			"detail" : err.Error(),
+		})
+	}
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
 		"message": "Tryout Added",
 		"data" : newTryout,

@@ -8,16 +8,20 @@ import (
 
 type Tryout struct {
 	gorm.Model
-	Title    	string `gorm:"size:255;not null" json:"title"`
-	Detail		string `gorm:"not null" json:"detail"`
-	// UserID   	uint   `gorm:"not null" json:"user_id"`
-	// User     	User   `json:"user"`
+	Title    string `gorm:"size:255;not null" json:"title"`
+	Detail   string `gorm:"not null" json:"detail"`
+	Username string `gorm:"size:100" json:"username"` // Boleh null agar tidak wajib punya Tryout
+	User     User   `gorm:"foreignKey:Username;references:Username;constraint:OnDelete:CASCADE" json:"user"`
 }
 
 
-func (t *Tryout) CreateTryout() *Tryout {
-	Db.Create(&t)
-	return t
+
+
+func (t *Tryout) CreateTryout() (*Tryout, error) {
+	if err := Db.Create(&t).Error; err != nil {
+		return nil, err
+	}
+	return t, nil
 }
 
 func GetTryoutByID(id string) (*Tryout, *gorm.DB) {
@@ -28,7 +32,7 @@ func GetTryoutByID(id string) (*Tryout, *gorm.DB) {
 		return nil, nil
 	}
 
-	dbVar := Db.Preload("User").Where("id = ?", uint(uid)).First(&tryout)
+	dbVar := Db.Where("id=?", uint(uid)).First(&tryout)
 
 	if dbVar.Error != nil {
 		return nil, dbVar
@@ -37,36 +41,33 @@ func GetTryoutByID(id string) (*Tryout, *gorm.DB) {
 	return &tryout, dbVar
 }
 
-
-func GetTryoutsByUserID(userID string) ([]Tryout, *gorm.DB) {
+func GetTryoutsByUsername(username string) ([]Tryout, error) {
 	var tryouts []Tryout
-	uid, err := strconv.ParseUint(userID, 10, 32)
-	if err != nil {
-		return nil, nil
+
+	if err := Db.Preload("User").Where("username = ?", username).Find(&tryouts).Error; err != nil {
+		return nil, err
 	}
-	dbVar := Db.Preload("User").Where("user_id = ?", uid).Find(&tryouts)
-	return tryouts, dbVar
+	return tryouts, nil
 }
 
-
-func GetAllTryout() []Tryout {
+func GetAllTryout() ([]Tryout, error) {
 	var allTryout []Tryout
-	Db.Find(&allTryout)
-	return allTryout
+
+	if err := Db.Find(&allTryout).Error; err != nil {
+		return nil, err
+	}
+	return allTryout, nil
 }
 
 func DeleteTryout(id string) (Tryout, error) {
 	var tryout Tryout
-
 	uid, err := strconv.ParseUint(id, 10, 32)
 	if err != nil {
-		return Tryout{}, nil
+		return Tryout{},err
 	}
 
-	err = Db.Where("id=?", uid).Delete(&tryout).Error
-	if err != nil {
-		return Tryout{}, err
+	if err := Db.Where("id = ?", uint(uid)).Delete(&tryout).Error; err != nil {
+		return Tryout{},err
 	}
 	return tryout, nil
 }
-
