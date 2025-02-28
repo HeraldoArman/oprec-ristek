@@ -11,7 +11,7 @@ type User struct {
 	Email    string   `gorm:"unique;not null" json:"email"`
 	Name     string   `gorm:"size:100;not null" json:"name"`
 	Password string   `gorm:"not null" json:"-"`
-	Tryouts  []Tryout `gorm:"foreignKey:Username;references:Username;constraint:OnDelete:CASCADE" json:"tryouts"`
+	Tryouts  *[]Tryout `gorm:"foreignKey:UserUsername" json:"tryouts"`
 }
 
 

@@ -1,6 +1,8 @@
 package controllers
 
 import (
+	// "strconv"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/heraldoarman/oprec-ristek/internal/models"
 )
@@ -54,35 +56,56 @@ func DeleteTryout(c *fiber.Ctx) error {
 }
 
 func UpdateTryout(c *fiber.Ctx) error {
-	updateTryout := models.Tryout{}
-	err := c.BodyParser(&updateTryout)
-	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error" : "error parsing data",
+    id := c.Params("id")
+    tryout, err := models.GetTryoutByID(id)
+    if err != nil {
+        return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+            "error": "Tryout not found",
 			"detail" : err.Error(),
-		})
-	}
-	id := c.Params("id")
-	tryout, db := models.GetTryoutByID(id)
-	if tryout == nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error" : "error, not found",
-		})
-	}
-	tryout = &updateTryout
-	err = db.Save(&tryout).Error
-	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error" : "error failed saving database",
-			"detail" : err.Error(),
-		})
-	}
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"message" : "Tryout Updated",
-		"detail" : tryout,
-	})
+        })
+    }
+    updateData := new(models.Tryout)
+    if err := c.BodyParser(updateData); err != nil {
+        return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+            "error":  "Error parsing data",
+            "detail": err.Error(),
+        })
+    }
 
+    // Membuat map untuk update
+    updateFields := map[string]interface{}{}
+    if updateData.Title != "" {
+        updateFields["title"] = updateData.Title
+    }
+    if updateData.Detail != "" {
+        updateFields["detail"] = updateData.Detail
+    }
+    if updateData.UserUsername != nil {
+        updateFields["user_username"] = updateData.UserUsername
+    }
+
+    // Update hanya field yang diubah
+    if len(updateFields) > 0 {
+        err := models.Db.Model(tryout).Updates(updateFields).Error
+        if err != nil {
+            return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+                "error":  "Failed to update database",
+                "detail": err.Error(),
+            })
+        }
+    }
+
+    return c.Status(fiber.StatusOK).JSON(fiber.Map{
+        "message": "Tryout Updated",
+        "detail":  updateFields,
+    })
 }
+
+
+
+
+
+
 
 func AddTryout(c *fiber.Ctx) error {
 	tryout := models.Tryout{}
