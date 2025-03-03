@@ -12,7 +12,7 @@ func init() {
 	database.ConnectDB()
 	Db = database.GetDB()
 
-	// User dibuat lebih dulu sebelum Tryout
+
 	Db.AutoMigrate(&User{})   
 	Db.AutoMigrate(&Tryout{})
 }

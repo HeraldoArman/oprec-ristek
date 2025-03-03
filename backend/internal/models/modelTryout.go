@@ -69,3 +69,4 @@ func DeleteTryout(id string) (Tryout, error) {
 	}
 	return tryout, nil
 }
+

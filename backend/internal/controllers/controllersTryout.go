@@ -72,7 +72,6 @@ func UpdateTryout(c *fiber.Ctx) error {
         })
     }
 
-    // Membuat map untuk update
     updateFields := map[string]interface{}{}
     if updateData.Title != "" {
         updateFields["title"] = updateData.Title
@@ -103,10 +102,6 @@ func UpdateTryout(c *fiber.Ctx) error {
 
 
 
-
-
-
-
 func AddTryout(c *fiber.Ctx) error {
 	tryout := models.Tryout{}
 	err := c.BodyParser(&tryout)
@@ -129,3 +124,4 @@ func AddTryout(c *fiber.Ctx) error {
 		"data" : newTryout,
 	})
 }
+
