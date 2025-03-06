@@ -1,7 +1,12 @@
-import { Card, Progress } from "flowbite-react";
+import { Card, Dropdown } from "flowbite-react";
 
 interface CardComponentProps {
-  title: string; description : string; image: string; buttonLabel: string; buttonStyle: string;
+  title: string;
+  description: string;
+  image: string;
+  buttonLabel: string;
+  buttonStyle: string;
+  addTryout?: boolean;
 }
 
 const CardComponent = ({
@@ -10,9 +15,33 @@ const CardComponent = ({
   image,
   buttonLabel,
   buttonStyle,
+  addTryout = false,
 }: CardComponentProps) => {
   return (
-    <Card className="w-full p-4 shadow-md">
+    <Card className="relative w-full p-4 shadow-md">
+      {addTryout && (
+        <div className="absolute top-2 right-2">
+          <Dropdown inline label="">
+            <Dropdown.Item>
+              <a
+                href="#"
+                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white"
+              >
+                Edit
+              </a>
+            </Dropdown.Item>
+            <Dropdown.Item></Dropdown.Item>
+            <Dropdown.Item>
+              <a
+                href="#"
+                className="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white"
+              >
+                Delete
+              </a>
+            </Dropdown.Item>
+          </Dropdown>
+        </div>
+      )}
       <img
         src={image}
         alt={title}
@@ -28,4 +57,5 @@ const CardComponent = ({
     </Card>
   );
 };
+
 export default CardComponent;

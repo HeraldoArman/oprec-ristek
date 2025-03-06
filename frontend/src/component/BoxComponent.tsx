@@ -1,4 +1,3 @@
-import { Card } from "flowbite-react";
 import CardComponent from "./CardComponent";
 import { useState } from "react";
 import Search from "./SearchComponent";
@@ -34,7 +33,7 @@ const BoxComponent = ({
 
       <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-3">
         {tryout.map((course, index) => (
-          <CardComponent key={index} {...course} />
+          <CardComponent addTryout={addTryout}  key={index} {...course}/>
         ))}
       </div>
       {addTryout ? (
