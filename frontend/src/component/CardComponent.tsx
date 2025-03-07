@@ -44,7 +44,7 @@ const CardComponent: React.FC<CardComponentProps> = ({
         <div className="absolute right-2 top-2">
           <Dropdown inline label="">
             <Dropdown.Item>
-              <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+              <a href={`/edit/${id}`} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                 Edit
               </a>
             </Dropdown.Item>
