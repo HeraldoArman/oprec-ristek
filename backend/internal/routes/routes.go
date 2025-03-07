@@ -11,7 +11,7 @@ func Routing(app *fiber.App) {
 	tryoutGroup := api.Group("/tryout")
 	tryoutGroup.Get("/",controllers.ListTryout)
 	tryoutGroup.Get("/:id",controllers.GetTryoutById)
-	tryoutGroup.Get("/:userid/user",controllers.GetTryoutByUser)
+	tryoutGroup.Get("/user/:userid",controllers.GetTryoutByUser)
 	tryoutGroup.Delete("/:id",controllers.DeleteTryout)
 	tryoutGroup.Put("/:id",controllers.UpdateTryout)
 	tryoutGroup.Post("/", controllers.AddTryout)
@@ -19,7 +19,7 @@ func Routing(app *fiber.App) {
 	userGroup := api.Group("/user")
 	userGroup.Get("/",controllers.ListUser)
 	userGroup.Get("/:id",controllers.GetUserById)
-	userGroup.Get("/user/:userId",controllers.GetTryoutByUser)
+	// userGroup.Get("/tryout/:userId",controllers.GetTryoutByUser)
 	userGroup.Delete("/:id",controllers.DeleteUser)
 	userGroup.Post("/", controllers.AddUser)
 }

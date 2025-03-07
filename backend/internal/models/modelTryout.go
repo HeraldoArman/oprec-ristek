@@ -35,6 +35,7 @@ func GetTryoutByID(id string) (*Tryout, error) {
     if err := Db.Where("id=?", uint(uid)).First(&tryout).Error; err != nil {
         return nil, err
     }
+	
     return &tryout, nil
 }
 
@@ -42,20 +43,22 @@ func GetTryoutByID(id string) (*Tryout, error) {
 func GetTryoutsByUsername(username string) ([]Tryout, error) {
 	var tryouts []Tryout
 
-	if err := Db.Preload("User").Where("username = ?", username).Find(&tryouts).Error; err != nil {
+	if err := Db.Preload("User").Order("created_at DESC").Where("user_username = ?", username).Find(&tryouts).Error; err != nil {
 		return nil, err
 	}
+
 	return tryouts, nil
 }
 
 func GetAllTryout() ([]Tryout, error) {
 	var allTryout []Tryout
 
-	if err := Db.Find(&allTryout).Error; err != nil {
+	if err := Db.Order("created_at DESC").Find(&allTryout).Error; err != nil {
 		return nil, err
 	}
 	return allTryout, nil
 }
+
 
 func DeleteTryout(id string) (Tryout, error) {
 	var tryout Tryout

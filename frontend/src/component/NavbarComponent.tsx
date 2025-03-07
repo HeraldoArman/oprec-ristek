@@ -1,9 +1,11 @@
 import { Avatar, Dropdown, Navbar } from "flowbite-react";
+// import { useNavigate } from "react-router-dom";
 
 const NavbarComponent = () => {
+  // const navigate = useNavigate();
   return (
     <Navbar fluid rounded>
-      <Navbar.Brand href="">
+      <Navbar.Brand href={"/"}>
         <span className="self-center whitespace-nowrap text-xl font-bold text-green-500">
           RIZZ QUIZ
         </span>
