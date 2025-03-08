@@ -7,6 +7,7 @@ const TryoutFormComponent = () => {
   const [formData, setFormData] = useState({
     title: "",
     detail: "",
+    image : "",
     username: "john_doe3",
   });
   const [loading, setLoading] = useState(false); 
@@ -34,7 +35,7 @@ const TryoutFormComponent = () => {
         throw new Error("Gagal membuat tryout");
       }
 
-      setFormData({ title: "", detail: "", username: "john_doe3" });
+      setFormData({ title: "",image:"", detail: "", username: "john_doe3" });
       navigate("/");
     } catch (error) {
       console.error("Error:", error);
@@ -64,6 +65,21 @@ const TryoutFormComponent = () => {
               placeholder="Tryout Name"
               required
               value={formData.title}
+              onChange={handleChange}
+              disabled={loading} // 
+            />
+          </div>
+
+          <div>
+            <div className="mb-2 block">
+              <Label htmlFor="image" value="Image Link" />
+            </div>
+            <TextInput
+              id="image"
+              type="url"
+              placeholder="Image link (optional)"
+
+              value={formData.image}
               onChange={handleChange}
               disabled={loading} // 
             />

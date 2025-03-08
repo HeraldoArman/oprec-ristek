@@ -8,6 +8,7 @@ const EditTryoutComponent = () => {
   const [formData, setFormData] = useState({
     title: "",
     detail: "",
+    image: "",
     username: "john_doe3",
   });
   const [loading, setLoading] = useState(false);
@@ -24,7 +25,8 @@ const EditTryoutComponent = () => {
         setFormData({
           title: data.title,
           detail: data.detail,
-          username: data.username, 
+          image: data.image || "https://picsum.photos/1000/600",
+          username: data.username,
         });
       } catch (error) {
         console.error("Error:", error);
@@ -38,7 +40,9 @@ const EditTryoutComponent = () => {
   }, [id]);
 
   // 🔹 3. Handle perubahan input
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     setFormData({
       ...formData,
       [e.target.id]: e.target.value,
@@ -56,9 +60,9 @@ const EditTryoutComponent = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
-
+      console.log(response, JSON.stringify(formData));
       if (!response.ok) throw new Error("Gagal memperbarui tryout");
-      navigate("/"); 
+      navigate("/");
     } catch (error) {
       console.error("Error:", error);
       alert("Terjadi kesalahan saat memperbarui tryout.");
@@ -71,7 +75,7 @@ const EditTryoutComponent = () => {
     <div className="relative w-full max-w-lg">
       <Card className="relative w-full">
         {loading && (
-          <div className="absolute inset-0 bg-white bg-opacity-70 flex items-center justify-center rounded-lg">
+          <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-white bg-opacity-70">
             <Spinner size="xl" />
           </div>
         )}
@@ -90,6 +94,31 @@ const EditTryoutComponent = () => {
               onChange={handleChange}
               disabled={loading}
             />
+          </div>
+          <div>
+            <div className="mb-2 block">
+              <Label htmlFor="image" value="Image Link" />
+            </div>
+            {formData.image &&
+            formData.image !== "https://picsum.photos/1000/600" ? (
+              <TextInput
+                id="image"
+                type="url"
+                placeholder="Image link (optional)"
+                value={formData.image}
+                onChange={handleChange}
+                disabled={loading}
+              />
+            ) : (
+              <TextInput
+                id="image"
+                type="url"
+                placeholder="Image link (optional)"
+                value=""
+                onChange={handleChange}
+                disabled={loading}
+              />
+            )}
           </div>
           <div>
             <div className="mb-2 block">

@@ -65,7 +65,7 @@ const CardComponent: React.FC<CardComponentProps> = ({
 
       <img
         src={image}
-        alt={title}
+        alt={image}
         className={`h-40 w-full rounded-t-lg object-cover ${loading ? "hidden" : "block"}`}
         onLoad={() => setLoading(false)}
         onError={() => setLoading(false)}

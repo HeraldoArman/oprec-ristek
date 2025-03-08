@@ -36,7 +36,7 @@ function Dashboard() {
           id: item.ID,
           title: item.title,
           detail: item.detail,
-          image: "https://picsum.photos/1000/600",
+          image: item.image ||"https://picsum.photos/1000/600",
         })));
       } catch (err: any) {
         setErrorUser(err.message);
@@ -54,7 +54,7 @@ function Dashboard() {
           id: item.ID,
           title: item.title,
           detail: item.detail,
-          image: "https://picsum.photos/1000/600",
+          image: item.image ||"https://picsum.photos/1000/600",
         })));
       } catch (err: any) {
         setErrorAll(err.message);
@@ -67,11 +67,13 @@ function Dashboard() {
     fetchAllTryout();
   }, []);
 
-  // Fungsi untuk menghapus tryout & menampilkan toast
+  // toast
   const handleDeleteTryout = (id: number) => {
     setUserTryouts((prev) => prev.filter((tryout) => tryout.id !== id));
-    setShowToast(true); // Tampilkan toast
-    setTimeout(() => setShowToast(false), 3000); // Sembunyikan setelah 3 detik
+    setAllTryouts((prev) => prev.filter((tryout) => tryout.id !== id));
+
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 3000);
   };
 
   return (
