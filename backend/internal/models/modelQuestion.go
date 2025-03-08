@@ -38,6 +38,19 @@ func GetQuestionByTryoutID(id string) ([]Question, error) {
 	return question, nil
 }
 
+func GetQuestionByID(id string) (Question, error) {
+	var question Question
+	uid, err := strconv.ParseUint(id, 10, 32)
+	if err != nil {
+		return Question{}, err
+	}
+
+	if err := Db.Where("id=?", uint(uid)).First(&question).Error; err != nil {
+		return Question{}, err
+	}
+	return question, nil
+}
+
 func DeleteQuestion(id string) (Question, error) {
 	var question Question
 	uid, err := strconv.ParseUint(id, 10, 32)

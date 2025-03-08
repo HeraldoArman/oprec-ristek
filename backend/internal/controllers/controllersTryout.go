@@ -132,7 +132,7 @@ func UpdateTryout(c *fiber.Ctx) error {
 			"detail": err.Error(),
 		})
 	}
-	updateData := new(models.Tryout)
+	updateData := models.Tryout{}
 	if err := c.BodyParser(updateData); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error":  "Error parsing data",
@@ -158,7 +158,6 @@ func UpdateTryout(c *fiber.Ctx) error {
 		updateFields["image_link"] = ""
 	}
 
-	// Update hanya field yang diubah
 	if len(updateFields) > 0 {
 		err := models.Db.Model(tryout).Updates(updateFields).Error
 		if err != nil {
@@ -180,7 +179,7 @@ func AddTryout(c *fiber.Ctx) error {
 	err := c.BodyParser(&tryout)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error":  "error processing data",
+			"error":  "Error parsing data",
 			"detail": err.Error(),
 		})
 	}
@@ -188,7 +187,7 @@ func AddTryout(c *fiber.Ctx) error {
 	newTryout, err := tryout.CreateTryout()
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error":  "error processing data",
+			"error":  "Failed to create new question",
 			"detail": err.Error(),
 		})
 	}
@@ -196,4 +195,22 @@ func AddTryout(c *fiber.Ctx) error {
 		"message": "Tryout Added",
 		"data":    newTryout,
 	})
+}
+func ListTryoutByCategory(c *fiber.Ctx) error {
+	category := c.Params("category")
+	tryout := models.Tryout{}
+	err := c.BodyParser(&tryout)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error":  "Error parsing data",
+			"detail": err.Error(),
+		})
+	}
+	tryoutList, err := models.GetTryoutByCategory(category)
+	if err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+	return c.JSON(tryoutList)
 }

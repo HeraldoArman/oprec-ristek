@@ -5,16 +5,12 @@ import (
 	"gorm.io/gorm"
 )
 
-
 var Db *gorm.DB
 
 func init() {
 	database.ConnectDB()
 	Db = database.GetDB()
 
-
-	Db.AutoMigrate(&User{})   
-	Db.AutoMigrate(&Tryout{})
+	Db.AutoMigrate(&User{}, &Tryout{}, &Question{}, &Submission{})
+	// Db.AutoMigrate()
 }
-
-

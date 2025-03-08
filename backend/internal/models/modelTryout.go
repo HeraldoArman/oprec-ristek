@@ -8,6 +8,7 @@ import (
 
 type KategoriTryout string
 
+// enum type
 const (
 	Saintek     KategoriTryout = "Saintek"
 	Soshum      KategoriTryout = "Soshum"
@@ -18,11 +19,14 @@ const (
 
 type Tryout struct {
 	gorm.Model
-	Title        string  `gorm:"size:255;not null" json:"title"`
-	Detail       string  `gorm:"not null" json:"detail"`
-	ImageLink    string  `gorm:"size:255" json:"image"`
-	UserUsername *string `gorm:"index;constraint:OnDelete:SET NULL;" json:"username"`
-	User         *User   `gorm:"foreignKey:UserUsername;references:Username;constraint:OnDelete:SET NULL;" json:"user"`
+	Title        string         `gorm:"size:255;not null" json:"title"`
+	Detail       string         `gorm:"not null" json:"detail"`
+	ImageLink    string         `gorm:"size:255" json:"image"`
+	Kategori     KategoriTryout `gorm:"not null" json:"kategori"`
+	Questions    []Question     `gorm:"foreignKey:TryoutID;constraint:OnDelete:CASCADE;" json:"questions"`
+	Submission   []Submission   `gorm:"foreignKey:TryoutID;constraint:OnDelete:CASCADE;" json:"submission"`
+	UserUsername *string        `gorm:"index;constraint:OnDelete:SET NULL;" json:"username"`
+	User         *User          `gorm:"foreignKey:UserUsername;references:Username;constraint:OnDelete:SET NULL;" json:"user"`
 }
 
 func (t *Tryout) CreateTryout() (*Tryout, error) {
@@ -100,4 +104,14 @@ func DeleteTryout(id string) (Tryout, error) {
 		return Tryout{}, err
 	}
 	return tryout, nil
+}
+
+func GetTryoutByCategory(category string) ([]Tryout, error) {
+	var tryouts []Tryout
+
+	if err := Db.Where("kategori = ?", category).Find(&tryouts).Error; err != nil {
+		return nil, err
+	}
+
+	return tryouts, nil
 }
