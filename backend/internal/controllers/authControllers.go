@@ -5,26 +5,27 @@ import (
 	"github.com/heraldoarman/oprec-ristek/internal/models"
 )
 
+// THIS FILE IS NOT FINISHED YET!
 func ListUser(c *fiber.Ctx) error {
 	allUser, err := models.GetAllUser()
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-	        "error": err.Error(),
-	    })
+			"error": err.Error(),
+		})
 	}
-	return c.JSON(allUser)	
+	return c.JSON(allUser)
 }
 
 func GetUserById(c *fiber.Ctx) error {
 	username := c.Params("username")
 	tryout, err := models.GetUser(username)
 	if err != nil {
-	    return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-	        "error": "Username not found",
-	    })
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"error": "Username not found",
+		})
 	}
 
-    return c.JSON(tryout)
+	return c.JSON(tryout)
 }
 
 func DeleteUser(c *fiber.Ctx) error {
@@ -32,12 +33,12 @@ func DeleteUser(c *fiber.Ctx) error {
 	tryout, err := models.DeleteUser(id)
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-	        "error": "Username not found",
-	    })
+			"error": "Username not found",
+		})
 	}
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"message" : "Username deleted",
-		"detail" : tryout,
+		"message": "Username deleted",
+		"detail":  tryout,
 	})
 }
 
@@ -46,20 +47,20 @@ func AddUser(c *fiber.Ctx) error {
 	err := c.BodyParser(&user)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error" : "error processing data",
-			"detail" : err.Error(),
+			"error":  "error processing data",
+			"detail": err.Error(),
 		})
 	}
 
 	newUser, err := user.CreateUser()
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error" : "error processing data",
-			"detail" : err.Error(),
+			"error":  "error processing data",
+			"detail": err.Error(),
 		})
 	}
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
 		"message": "new user Added",
-		"data" : newUser,
+		"data":    newUser,
 	})
 }
