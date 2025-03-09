@@ -1,3 +1,4 @@
+// fungsi conroller untuk question
 package controllers
 
 import (
@@ -39,6 +40,11 @@ func GetQuestionById(c *fiber.Ctx) error {
 func DeleteQuestion(c *fiber.Ctx) error {
 	id := c.Params("id")
 	question, err := models.DeleteQuestion(id)
+	if isThereSubmission := models.IsThereSubmission(question.TryoutID); isThereSubmission {
+		return c.Status(fiber.StatusConflict).JSON(fiber.Map{
+			"error": "This tryout has submission, you can't delete the question anymore",
+		})
+	}
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"error": err.Error(),
@@ -60,6 +66,11 @@ func UpdateQuestion(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error":  "Error parsing data",
 			"detail": err.Error(),
+		})
+	}
+	if isThereSubmission := models.IsThereSubmission(question.TryoutID); isThereSubmission {
+		return c.Status(fiber.StatusConflict).JSON(fiber.Map{
+			"error": "This tryout has submission, you can't update the question anymore",
 		})
 	}
 	updateFields := map[string]interface{}{}

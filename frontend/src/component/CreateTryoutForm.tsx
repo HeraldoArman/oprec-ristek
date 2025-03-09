@@ -1,28 +1,37 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Card, Label, TextInput, Textarea, Spinner } from "flowbite-react";
+import {
+  Card,
+  Label,
+  TextInput,
+  Textarea,
+  Spinner,
+  Select,
+} from "flowbite-react";
 
 const TryoutFormComponent = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     title: "",
     detail: "",
-    image : "",
+    image: "",
     username: "john_doe3",
+    kategori: "Lainnya",
   });
-  const [loading, setLoading] = useState(false); 
+  const [loading, setLoading] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     setFormData({
       ...formData,
       [e.target.id]: e.target.value,
     });
   };
 
-  // Handle submit form
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true); // Aktifkan loading
+    setLoading(true);
 
     try {
       const response = await fetch("http://127.0.0.1:3000/tryout", {
@@ -30,18 +39,24 @@ const TryoutFormComponent = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
+      console.log(formData);
 
       if (!response.ok) {
         throw new Error("Gagal membuat tryout");
       }
-
-      setFormData({ title: "",image:"", detail: "", username: "john_doe3" });
+      setFormData({
+        title: "",
+        image: "",
+        detail: "",
+        username: "john_doe3",
+        kategori: "Lainnya",
+      });
       navigate("/");
     } catch (error) {
       console.error("Error:", error);
       alert("Terjadi kesalahan saat membuat tryout.");
     } finally {
-      setLoading(false); 
+      setLoading(false);
     }
   };
 
@@ -49,7 +64,7 @@ const TryoutFormComponent = () => {
     <div className="relative w-full max-w-lg">
       <Card className="relative w-full">
         {loading && (
-          <div className="absolute inset-0 bg-white bg-opacity-70 flex items-center justify-center rounded-lg">
+          <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-white bg-opacity-70">
             <Spinner size="xl" />
           </div>
         )}
@@ -66,10 +81,29 @@ const TryoutFormComponent = () => {
               required
               value={formData.title}
               onChange={handleChange}
-              disabled={loading} // 
+              disabled={loading} //
             />
           </div>
-
+          <div className="max-w-md">
+            <div className="mb-2 block">
+              <Label htmlFor="category" value="Select Category" />
+            </div>
+            <Select
+              id="category"
+              required
+              value={formData.kategori}
+              onChange={(e) =>
+                setFormData({ ...formData, kategori: e.target.value })
+              }
+              disabled={loading}
+            >
+              <option value="Saintek">Saintek</option>
+              <option value="Soshum">Soshum</option>
+              <option value="Bahasa">Bahasa</option>
+              <option value="Pemrograman">Pemrograman</option>
+              <option value="Lainnya">Lainnya</option>
+            </Select>
+          </div>
           <div>
             <div className="mb-2 block">
               <Label htmlFor="image" value="Image Link" />
@@ -78,12 +112,12 @@ const TryoutFormComponent = () => {
               id="image"
               type="url"
               placeholder="Image link (optional)"
-
               value={formData.image}
               onChange={handleChange}
-              disabled={loading} // 
+              disabled={loading}
             />
           </div>
+
           <div>
             <div className="mb-2 block">
               <Label htmlFor="detail" value="Description" />
@@ -104,7 +138,7 @@ const TryoutFormComponent = () => {
             <button
               type="submit"
               className="rounded-lg bg-green-500 px-6 py-2 font-semibold text-white hover:bg-green-600 disabled:opacity-50"
-              disabled={loading} 
+              disabled={loading}
             >
               {loading ? "Processing..." : "Create Tryout"}
             </button>

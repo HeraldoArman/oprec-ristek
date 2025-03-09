@@ -7,12 +7,12 @@ import BoxComponent from "../component/BoxComponent";
 import FooterComponent from "../component/FooterComponent";
 // import { useNavigate } from "react-router-dom";
 
-
 interface Tryout {
   id: number;
   title: string;
   detail: string;
   image?: string;
+  kategori: string;
 }
 
 function Dashboard() {
@@ -26,18 +26,29 @@ function Dashboard() {
   const [errorAll, setErrorAll] = useState("");
   const [showToast, setShowToast] = useState(false);
 
+  const [searchTermAll, setSearchTermAll] = useState("");
+  const [searchTermUser, setSearchTermUser] = useState("");
+
   useEffect(() => {
+    console.log("dashboard", searchTermAll, searchTermUser);
     const fetchUserTryout = async () => {
       try {
-        const response = await fetch("http://127.0.0.1:3000/tryout/user/john_doe3");
+        const response = await fetch(
+          "http://127.0.0.1:3000/tryout/user/john_doe3?search=" +
+            searchTermUser,
+        );
         if (!response.ok) throw new Error("Gagal mengambil data My Tryout");
         const data = await response.json();
-        setUserTryouts(data.map((item: any) => ({
-          id: item.ID,
-          title: item.title,
-          detail: item.detail,
-          image: item.image ||"https://picsum.photos/1000/600",
-        })));
+        setUserTryouts(
+          data.map((item: any) => ({
+            id: item.ID,
+            title: item.title,
+            detail: item.detail,
+            image: item.image || "https://picsum.photos/1000/600",
+            kategori: item.kategori,
+          })),
+        );
+        console.log(data);
       } catch (err: any) {
         setErrorUser(err.message);
       } finally {
@@ -47,15 +58,20 @@ function Dashboard() {
 
     const fetchAllTryout = async () => {
       try {
-        const response = await fetch("http://127.0.0.1:3000/tryout/");
+        const response = await fetch(
+          "http://127.0.0.1:3000/tryout/?search=" + searchTermAll,
+        );
         if (!response.ok) throw new Error("Gagal mengambil data All Tryout");
         const data = await response.json();
-        setAllTryouts(data.map((item: any) => ({
-          id: item.ID,
-          title: item.title,
-          detail: item.detail,
-          image: item.image ||"https://picsum.photos/1000/600",
-        })));
+        setAllTryouts(
+          data.map((item: any) => ({
+            id: item.ID,
+            title: item.title,
+            detail: item.detail,
+            image: item.image || "https://picsum.photos/1000/600",
+            kategori: item.kategori,
+          })),
+        );
       } catch (err: any) {
         setErrorAll(err.message);
       } finally {
@@ -65,7 +81,7 @@ function Dashboard() {
 
     fetchUserTryout();
     fetchAllTryout();
-  }, []);
+  }, [searchTermAll, searchTermUser]);
 
   // toast
   const handleDeleteTryout = (id: number) => {
@@ -78,7 +94,7 @@ function Dashboard() {
 
   return (
     <Flowbite>
-      <div className="flex min-h-screen flex-col bg-gray-100 relative">
+      <div className="relative flex min-h-screen flex-col bg-gray-100">
         <NavbarComponent />
 
         <div className="container mx-auto flex-grow px-5 py-5">
@@ -89,6 +105,8 @@ function Dashboard() {
             loading={loadingUser}
             error={errorUser}
             setTryouts={handleDeleteTryout}
+            searchTerm={searchTermUser}
+            setSearchTerm={setSearchTermUser}
           />
         </div>
 
@@ -100,13 +118,15 @@ function Dashboard() {
             loading={loadingAll}
             error={errorAll}
             setTryouts={handleDeleteTryout}
+            searchTerm={searchTermAll}
+            setSearchTerm={setSearchTermAll}
           />
         </div>
 
         <FooterComponent />
 
         {/* Toast dengan animasi */}
-        <div className="fixed top-5 left-5 z-50">
+        <div className="fixed left-5 top-5 z-50">
           <AnimatePresence>
             {showToast && (
               <motion.div
@@ -119,7 +139,9 @@ function Dashboard() {
                   <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-red-100 text-red-500 dark:bg-red-800 dark:text-red-200">
                     <HiX className="h-5 w-5" />
                   </div>
-                  <div className="ml-3 text-sm font-normal">Item has been deleted.</div>
+                  <div className="ml-3 text-sm font-normal">
+                    Item has been deleted.
+                  </div>
                   <Toast.Toggle onClick={() => setShowToast(false)} />
                 </Toast>
               </motion.div>

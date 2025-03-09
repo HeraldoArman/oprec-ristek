@@ -1,3 +1,4 @@
+// routing untuk semua fungsi controller
 package routes
 
 import (
@@ -15,7 +16,7 @@ func Routing(app *fiber.App) {
 	tryoutGroup.Delete("/:id", controllers.DeleteTryout)
 	tryoutGroup.Put("/:id", controllers.UpdateTryout)
 	tryoutGroup.Post("/", controllers.AddTryout)
-	tryoutGroup.Get("category/:category", controllers.ListTryoutByCategory)
+	// tryoutGroup.Get("category/:category", controllers.ListTryoutByCategory)
 
 	userGroup := api.Group("/user")
 	userGroup.Get("/", controllers.ListUser)
@@ -33,12 +34,14 @@ func Routing(app *fiber.App) {
 
 	submissionGroup := api.Group("/submission")
 	submissionGroup.Get("/", controllers.ListAllSubmission)
+	submissionGroup.Get("/tryout/user", controllers.GetSubmissionByTryoutIdAndUser)
 	submissionGroup.Get("/tryout/:tryoutId", controllers.GetSubmissionByTryout)
 	submissionGroup.Get("/user/:username", controllers.GetSubmissionByUser)
 	submissionGroup.Get("/:id", controllers.GetSubmissionById)
 	submissionGroup.Delete("/:id", controllers.DeleteSubmission)
 	submissionGroup.Post("/", controllers.AddSubmission)
 	submissionGroup.Put("/:id", controllers.UpdateSubmission)
+	submissionGroup.Get("/totalScore", controllers.GetTotalScore)
 	// submissionGroup.Post("/evaluate", controllers.EvaluateSubmission)
 
 }

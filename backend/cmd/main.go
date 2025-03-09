@@ -10,6 +10,7 @@ import (
 	"github.com/heraldoarman/oprec-ristek/internal/routes"
 )
 
+// main function
 func main() {
 	app := fiber.New()
 	app.Use(logger.New(logger.Config{
@@ -18,16 +19,16 @@ func main() {
 		TimeZone:   "Asia/Jakarta",
 	}))
 	app.Use(limiter.New(limiter.Config{
-		Max:        100,             
-		Expiration: 1 * time.Minute, 
+		Max:        100,
+		Expiration: 1 * time.Minute,
 	}))
 
 	app.Use(cors.New(cors.Config{
-		AllowOrigins: "http://localhost:5173", // Izinkan request dari frontend
+		AllowOrigins: "http://localhost:5173",
 		AllowMethods: "GET,POST,PUT,DELETE,OPTIONS",
 		AllowHeaders: "Origin, Content-Type, Accept",
 	}))
-	
+
 	routes.Routing(app)
 	app.Listen(":3000")
 }

@@ -1,5 +1,6 @@
 import { Card, Dropdown, Spinner } from "flowbite-react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface CardComponentProps {
   id: number;
@@ -7,7 +8,8 @@ interface CardComponentProps {
   detail: string;
   image?: string;
   addTryout?: boolean;
-  setTryouts: (id: number) => void; // Ubah tipe data menjadi fungsi dengan id sebagai parameter
+  kategori: string;
+  setTryouts: (id: number) => void;
 }
 
 const CardComponent: React.FC<CardComponentProps> = ({
@@ -16,10 +18,11 @@ const CardComponent: React.FC<CardComponentProps> = ({
   detail,
   image = "https://via.placeholder.com/150",
   addTryout = false,
+  kategori,
   setTryouts,
 }) => {
   const [loading, setLoading] = useState(true);
-
+  const navigate = useNavigate();
   const handleDelete = async () => {
     try {
       const response = await fetch(`http://127.0.0.1:3000/tryout/${id}`, {
@@ -31,7 +34,7 @@ const CardComponent: React.FC<CardComponentProps> = ({
         throw new Error("Gagal menghapus tryout");
       }
 
-      setTryouts(id); // Panggil fungsi dari Dashboard agar toast muncul
+      setTryouts(id);
     } catch (error) {
       console.error("Error deleting tryout:", error);
       alert("Terjadi kesalahan saat menghapus tryout.");
@@ -44,7 +47,10 @@ const CardComponent: React.FC<CardComponentProps> = ({
         <div className="absolute right-2 top-2">
           <Dropdown inline label="">
             <Dropdown.Item>
-              <a href={`/edit/${id}`} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+              <a
+                href={`/edit/${id}`}
+                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+              >
                 Edit
               </a>
             </Dropdown.Item>
@@ -73,8 +79,14 @@ const CardComponent: React.FC<CardComponentProps> = ({
 
       <div className="p-4">
         <h3 className="text-center text-lg font-semibold">{title}</h3>
+        <p className="pb-2 text-center text-xs text-gray-600">
+          category: {kategori}
+        </p>
         <p className="pb-2 text-center text-xs text-gray-600">{detail}</p>
-        <button className="w-full rounded-lg bg-blue-500 py-2 text-white hover:bg-blue-600">
+        <button
+          className="w-full rounded-lg bg-blue-500 py-2 text-white hover:bg-blue-600"
+          onClick={() => navigate(`/detail/${id}`)}
+        >
           Start Tryout
         </button>
       </div>

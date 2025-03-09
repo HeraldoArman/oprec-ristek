@@ -1,19 +1,26 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom"; // Import useParams
-import { Card, Label, TextInput, Textarea, Spinner } from "flowbite-react";
+import { useNavigate, useParams } from "react-router-dom";
+import {
+  Card,
+  Label,
+  TextInput,
+  Textarea,
+  Spinner,
+  Select,
+} from "flowbite-react";
 
 const EditTryoutComponent = () => {
-  const { id } = useParams(); // Ambil ID dari URL
+  const { id } = useParams();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     title: "",
     detail: "",
     image: "",
     username: "john_doe3",
+    kategori: "",
   });
   const [loading, setLoading] = useState(false);
 
-  // 🔹 2. Fetch data tryout berdasarkan ID saat komponen dimount
   useEffect(() => {
     const fetchTryout = async () => {
       setLoading(true);
@@ -27,6 +34,7 @@ const EditTryoutComponent = () => {
           detail: data.detail,
           image: data.image || "https://picsum.photos/1000/600",
           username: data.username,
+          kategori: data.kategori,
         });
       } catch (error) {
         console.error("Error:", error);
@@ -36,12 +44,12 @@ const EditTryoutComponent = () => {
       }
     };
 
-    if (id) fetchTryout(); // Jalankan hanya jika id tersedia
+    if (id) fetchTryout();
   }, [id]);
-
-  // 🔹 3. Handle perubahan input
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
   ) => {
     setFormData({
       ...formData,
@@ -49,23 +57,23 @@ const EditTryoutComponent = () => {
     });
   };
 
-  // 🔹 4. Handle submit form untuk update
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
+      console.log(formData);
       const response = await fetch(`http://127.0.0.1:3000/tryout/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
-      console.log(response, JSON.stringify(formData));
-      if (!response.ok) throw new Error("Gagal memperbarui tryout");
+      // console.log(response, JSON.stringify(formData));
+      if (!response.ok) throw new Error("error while updating tryout");
       navigate("/");
     } catch (error) {
       console.error("Error:", error);
-      alert("Terjadi kesalahan saat memperbarui tryout.");
+      alert("error while updating tryout");
     } finally {
       setLoading(false);
     }
@@ -94,6 +102,24 @@ const EditTryoutComponent = () => {
               onChange={handleChange}
               disabled={loading}
             />
+          </div>
+          <div className="max-w-md">
+            <div className="mb-2 block">
+              <Label htmlFor="kategori" value="Select Category" />
+            </div>
+            <Select
+              id="kategori"
+              required
+              value={formData.kategori}
+              onChange={handleChange}
+              disabled={loading}
+            >
+              <option value="Saintek">Saintek</option>
+              <option value="Soshum">Soshum</option>
+              <option value="Bahasa">Bahasa</option>
+              <option value="Pemrograman">Pemrograman</option>
+              <option value="Lainnya">Lainnya</option>
+            </Select>
           </div>
           <div>
             <div className="mb-2 block">

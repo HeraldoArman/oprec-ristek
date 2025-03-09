@@ -1,3 +1,5 @@
+// THIS FILE IS NOT FINISHED YET!
+// tadinya mau nekat sampai level 4, cuman ga jadi
 package controllers
 
 import (
@@ -5,7 +7,6 @@ import (
 	"github.com/heraldoarman/oprec-ristek/internal/models"
 )
 
-// THIS FILE IS NOT FINISHED YET!
 func ListUser(c *fiber.Ctx) error {
 	allUser, err := models.GetAllUser()
 	if err != nil {

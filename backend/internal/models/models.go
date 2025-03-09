@@ -1,3 +1,4 @@
+// connect ke database dan migrate database
 package models
 
 import (

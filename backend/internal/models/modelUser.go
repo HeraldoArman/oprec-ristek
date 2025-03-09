@@ -1,3 +1,4 @@
+// model database untuk user (tidak selesai sampai level 4 untuk autentikasi)
 package models
 
 import (
@@ -7,13 +8,12 @@ import (
 )
 
 type User struct {
-	Username string   `gorm:"size:100;primaryKey;unique;not null" json:"username"`
-	Email    string   `gorm:"unique;not null" json:"email"`
-	Name     string   `gorm:"size:100;not null" json:"name"`
-	Password string   `gorm:"not null" json:"-"`
+	Username string    `gorm:"size:100;primaryKey;unique;not null" json:"username"`
+	Email    string    `gorm:"unique;not null" json:"email"`
+	Name     string    `gorm:"size:100;not null" json:"name"`
+	Password string    `gorm:"not null" json:"-"`
 	Tryouts  *[]Tryout `gorm:"foreignKey:UserUsername" json:"tryouts"`
 }
-
 
 func (u *User) CreateUser() (*User, error) {
 	if err := Db.Create(&u).Error; err != nil {
@@ -26,10 +26,10 @@ func GetUser(username string) (*User, error) {
 	var user User
 	err := Db.Preload("Tryouts").Where("username = ?", username).First(&user).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
-		return nil, nil // Tidak ditemukan, return nil
+		return nil, nil // user not found
 	}
 	if err != nil {
-		return nil, err // Error lainnya
+		return nil, err
 	}
 	return &user, nil
 }

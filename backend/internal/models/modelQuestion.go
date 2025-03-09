@@ -1,3 +1,4 @@
+// database question
 package models
 
 import (

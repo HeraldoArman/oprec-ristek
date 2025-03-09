@@ -1,3 +1,4 @@
+// model database untuk submission
 package models
 
 import (

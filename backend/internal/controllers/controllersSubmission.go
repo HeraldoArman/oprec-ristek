@@ -1,3 +1,4 @@
+// fungsi fungsi controller untuk submission
 package controllers
 
 import (

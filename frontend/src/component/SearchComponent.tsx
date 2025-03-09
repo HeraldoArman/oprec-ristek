@@ -21,7 +21,6 @@ const Search: React.FC<SearchProps> = ({ searchTerm, setsearchTerm }) => {
         className="ml-3 w-full border-none bg-transparent text-gray-700 placeholder-gray-400 outline-none focus:ring-0"
       />
     </div>
-    // </div>
   );
 };
 

@@ -1,8 +1,7 @@
+// fungsi controller untuk tryout
 package controllers
 
 import (
-	// "strconv"
-
 	"fmt"
 	"sort"
 	"strings"
@@ -15,14 +14,19 @@ func ListTryout(c *fiber.Ctx) error {
 	querySearch := c.Query("search")
 	querySortByName := c.Query("sort_by_name")
 	querySortByDate := c.Query("sort_by_date")
+	queryCategory := c.Query("category")
 
 	var tryoutList []models.Tryout
 	var err error
 
-	if querySearch == "" {
+	if querySearch == "" && queryCategory == "" {
 		tryoutList, err = models.GetAllTryout()
-	} else {
+	} else if queryCategory == "" && querySearch != "" {
 		tryoutList, err = models.GetTryoutByTitle(querySearch)
+	} else if queryCategory != "" && querySearch == "" {
+		tryoutList, err = models.GetTryoutByCategory(queryCategory)
+	} else {
+		tryoutList, err = models.GetTryoutByCategoryAndTitle(queryCategory, querySearch)
 	}
 
 	if err != nil {
@@ -117,6 +121,11 @@ func DeleteTryout(c *fiber.Ctx) error {
 			"error": "Tryout not found",
 		})
 	}
+	if isThereSubmission := models.IsThereSubmission(tryout.ID); isThereSubmission {
+		return c.Status(fiber.StatusConflict).JSON(fiber.Map{
+			"error": "This tryout has submission, you can't delete the question anymore",
+		})
+	}
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "Tryout deleted",
 		"detail":  tryout,
@@ -133,10 +142,15 @@ func UpdateTryout(c *fiber.Ctx) error {
 		})
 	}
 	updateData := models.Tryout{}
-	if err := c.BodyParser(updateData); err != nil {
+	if err := c.BodyParser(&updateData); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error":  "Error parsing data",
 			"detail": err.Error(),
+		})
+	}
+	if isThereSubmission := models.IsThereSubmission(tryout.ID); isThereSubmission {
+		return c.Status(fiber.StatusConflict).JSON(fiber.Map{
+			"error": "This tryout has submission, you can't update the question anymore",
 		})
 	}
 
@@ -156,6 +170,10 @@ func UpdateTryout(c *fiber.Ctx) error {
 
 	if updateData.ImageLink == "" {
 		updateFields["image_link"] = ""
+	}
+
+	if updateData.Kategori != "" {
+		updateFields["kategori"] = updateData.Kategori
 	}
 
 	if len(updateFields) > 0 {
@@ -195,22 +213,4 @@ func AddTryout(c *fiber.Ctx) error {
 		"message": "Tryout Added",
 		"data":    newTryout,
 	})
-}
-func ListTryoutByCategory(c *fiber.Ctx) error {
-	category := c.Params("category")
-	tryout := models.Tryout{}
-	err := c.BodyParser(&tryout)
-	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error":  "Error parsing data",
-			"detail": err.Error(),
-		})
-	}
-	tryoutList, err := models.GetTryoutByCategory(category)
-	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"error": err.Error(),
-		})
-	}
-	return c.JSON(tryoutList)
 }

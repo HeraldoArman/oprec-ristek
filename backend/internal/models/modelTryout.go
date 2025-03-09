@@ -1,3 +1,4 @@
+// model database untuk tryout
 package models
 
 import (
@@ -78,7 +79,7 @@ func GetTryoutsByUsernameAndTitle(username string, query string) ([]Tryout, erro
 	db := Db.Preload("User").Order("created_at DESC").Where("user_username = ?", username)
 
 	if query != "" {
-		db = db.Where("title LIKE ?", query+"%")
+		db = db.Where("LOWER(title) LIKE LOWER(?)", "%"+query+"%")
 	}
 
 	if err := db.Find(&tryouts).Error; err != nil {
@@ -100,7 +101,7 @@ func GetAllTryout() ([]Tryout, error) {
 func GetTryoutByTitle(query string) ([]Tryout, error) {
 	var tryouts []Tryout
 
-	if err := Db.Where("title LIKE ?", query+"%").Find(&tryouts).Error; err != nil {
+	if err := Db.Where("LOWER(title) LIKE LOWER(?)", "%"+query+"%").Find(&tryouts).Error; err != nil {
 		return nil, err
 	}
 
@@ -124,6 +125,31 @@ func GetTryoutByCategory(category string) ([]Tryout, error) {
 	var tryouts []Tryout
 
 	if err := Db.Where("kategori = ?", category).Find(&tryouts).Error; err != nil {
+		return nil, err
+	}
+
+	return tryouts, nil
+}
+
+func IsThereSubmission(id uint) bool {
+	var submission Submission
+
+	if err := Db.Where("tryout_id = ?", id).First(&submission).Error; err != nil {
+		return false
+	}
+	return true
+}
+
+func GetTryoutByCategoryAndTitle(category string, query string) ([]Tryout, error) {
+	var tryouts []Tryout
+
+	db := Db.Where("kategori = ?", category)
+
+	if query != "" {
+		db = db.Where("title LIKE ?", "%"+query+"%")
+	}
+
+	if err := db.Find(&tryouts).Error; err != nil {
 		return nil, err
 	}
 
