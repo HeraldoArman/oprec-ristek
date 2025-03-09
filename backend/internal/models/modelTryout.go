@@ -1,6 +1,7 @@
 package models
 
 import (
+	"fmt"
 	"strconv"
 
 	"gorm.io/gorm"
@@ -17,12 +18,25 @@ const (
 	Lainnya     KategoriTryout = "Lainnya"
 )
 
+func (kt *KategoriTryout) Scan(value interface{}) error {
+	strValue, ok := value.(string)
+	if !ok {
+		return fmt.Errorf("failed to scan KategoriTryout: %v", value)
+	}
+	*kt = KategoriTryout(strValue)
+	return nil
+}
+
+func (kt KategoriTryout) Value() (interface{}, error) {
+	return string(kt), nil
+}
+
 type Tryout struct {
 	gorm.Model
 	Title        string         `gorm:"size:255;not null" json:"title"`
 	Detail       string         `gorm:"not null" json:"detail"`
 	ImageLink    string         `gorm:"size:255" json:"image"`
-	Kategori     KategoriTryout `gorm:"not null" json:"kategori"`
+	Kategori     KategoriTryout `gorm:"type:kategori_tryout" json:"kategori"`
 	Questions    []Question     `gorm:"foreignKey:TryoutID;constraint:OnDelete:CASCADE;" json:"questions"`
 	Submission   []Submission   `gorm:"foreignKey:TryoutID;constraint:OnDelete:CASCADE;" json:"submission"`
 	UserUsername *string        `gorm:"index;constraint:OnDelete:SET NULL;" json:"username"`

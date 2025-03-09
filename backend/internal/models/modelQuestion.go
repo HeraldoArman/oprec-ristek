@@ -11,6 +11,7 @@ type Question struct {
 	TryoutID      uint   `gorm:"not null;index" json:"tryout_id"`
 	Question      string `gorm:"type:text;not null" json:"question"`
 	CorrectAnswer bool   `gorm:"not null" json:"correct_answer"`
+	Tryout        Tryout `gorm:"foreignKey:TryoutID;constraint:OnDelete:CASCADE;" json:"tryout"`
 }
 
 func (q *Question) CreateQuestion() (*Question, error) {
