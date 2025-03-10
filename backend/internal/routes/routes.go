@@ -34,14 +34,14 @@ func Routing(app *fiber.App) {
 
 	submissionGroup := api.Group("/submission")
 	submissionGroup.Get("/", controllers.ListAllSubmission)
+	submissionGroup.Get("/evaluate", controllers.GetTotalScore)
 	submissionGroup.Get("/tryout/user", controllers.GetSubmissionByTryoutIdAndUser)
 	submissionGroup.Get("/tryout/:tryoutId", controllers.GetSubmissionByTryout)
 	submissionGroup.Get("/user/:username", controllers.GetSubmissionByUser)
-	submissionGroup.Get("/:id", controllers.GetSubmissionById)
-	submissionGroup.Delete("/:id", controllers.DeleteSubmission)
+	submissionGroup.Get("/id/:id", controllers.GetSubmissionById)
 	submissionGroup.Post("/", controllers.AddSubmission)
+	submissionGroup.Delete("/:id", controllers.DeleteSubmission)
 	submissionGroup.Put("/:id", controllers.UpdateSubmission)
-	submissionGroup.Get("/totalScore", controllers.GetTotalScore)
 	// submissionGroup.Post("/evaluate", controllers.EvaluateSubmission)
 
 }
