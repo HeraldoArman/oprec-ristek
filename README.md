@@ -61,7 +61,7 @@ Before starting, make sure you have installed:
 ## API Documentation
 Access the documentation at:
 ```
-http://localhost:3000/swagger/index.html
+https://documenter.getpostman.com/view/41269141/2sAYk7RPNS
 ```
 
 
