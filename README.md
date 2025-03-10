@@ -33,10 +33,9 @@ Before starting, make sure you have installed:
    npm install
    ```
 
-4. Configure the `.env` file for the backend based on the provided example (`.env.example`):
+4. Create and onfigure the `.env` file:
    ```sh
    cd ../backend
-   cp .env.example .env
    ```
    Then edit it as needed.
 
