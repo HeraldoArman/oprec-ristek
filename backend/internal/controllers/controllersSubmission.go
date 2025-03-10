@@ -141,7 +141,7 @@ func GetSubmissionByTryoutIdAndUser(c *fiber.Ctx) error {
 		})
 	}
 
-	submission, err := models.GetSubmissionByTryoutIDAndUser(tryoutId, username)
+	submission, err := models.GetSubmissionByTryoutIDAndUser(username, tryoutId)
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"error": err.Error(),
