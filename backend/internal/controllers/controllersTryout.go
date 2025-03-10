@@ -2,7 +2,6 @@
 package controllers
 
 import (
-	"fmt"
 	"sort"
 	"strings"
 
@@ -70,7 +69,6 @@ func GetTryoutByUser(c *fiber.Ctx) error {
 		tryoutList, err = models.GetTryoutsByUsername(id)
 	} else {
 		tryoutList, err = models.GetTryoutsByUsernameAndTitle(id, querySearch)
-		fmt.Println(tryoutList)
 	}
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
