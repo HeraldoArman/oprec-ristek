@@ -118,7 +118,7 @@ func AddSubmission(c *fiber.Ctx) error {
 			"detail": err.Error(),
 		})
 	}
-	submission.Correct = models.EvaluateSubmission(question, submission)
+	submission.IsCorrect = models.EvaluateSubmission(question, submission)
 
 	if _, err := submission.CreateSubmission(); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{

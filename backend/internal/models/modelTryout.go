@@ -38,10 +38,10 @@ type Tryout struct {
 	Detail       string         `gorm:"not null" json:"detail"`
 	ImageLink    string         `gorm:"size:255" json:"image"`
 	Kategori     KategoriTryout `gorm:"type:kategori_tryout" json:"kategori"`
-	Questions    []Question     `gorm:"foreignKey:TryoutID;constraint:OnDelete:CASCADE;" json:"questions"`
-	Submission   []Submission   `gorm:"foreignKey:TryoutID;constraint:OnDelete:CASCADE;" json:"submission"`
+	Questions    []Question     `gorm:"foreignKey:TryoutID;constraint:OnDelete:CASCADE;" json:"-"`
+	Submission   []Submission   `gorm:"foreignKey:TryoutID;constraint:OnDelete:CASCADE;" json:"-"`
 	UserUsername *string        `gorm:"index;constraint:OnDelete:SET NULL;" json:"username"`
-	User         *User          `gorm:"foreignKey:UserUsername;references:Username;constraint:OnDelete:SET NULL;" json:"user"`
+	User         *User          `gorm:"foreignKey:UserUsername;references:Username;constraint:OnDelete:SET NULL;" json:"-"`
 }
 
 func (t *Tryout) CreateTryout() (*Tryout, error) {

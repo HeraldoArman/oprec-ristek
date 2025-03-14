@@ -13,9 +13,9 @@ type Submission struct {
 	UserUsername string `gorm:"index;not null" json:"user_username"`
 	QuestionID   uint   `gorm:"not null;index" json:"question_id"`
 	Answer       bool   `gorm:"not null" json:"answer"`
-	Correct      bool   `gorm:"not null" json:"correct"`
-	User         User   `gorm:"foreignKey:UserUsername;references:Username;constraint:OnDelete:CASCADE;" json:"user"`
-	Tryout       Tryout `gorm:"foreignKey:TryoutID;constraint:OnDelete:CASCADE;" json:"tryout"`
+	IsCorrect    bool   `gorm:"not null" json:"isCorrect"`
+	User         User   `gorm:"foreignKey:UserUsername;references:Username;constraint:OnDelete:CASCADE;" json:"-"`
+	Tryout       Tryout `gorm:"foreignKey:TryoutID;constraint:OnDelete:CASCADE;" json:"-"`
 }
 
 func (s *Submission) CreateSubmission() (*Submission, error) {
@@ -89,7 +89,7 @@ func GetTotalScore(username string, tryutid string) (int, int, error) {
 		return 0, 0, err
 	}
 	for _, sub := range submission {
-		if sub.Correct {
+		if sub.IsCorrect {
 			totalCorrect++
 		} else {
 			totalWrong++
